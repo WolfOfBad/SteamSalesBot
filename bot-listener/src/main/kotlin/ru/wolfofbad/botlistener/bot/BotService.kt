@@ -1,4 +1,4 @@
-package ru.wolfofbad.botlistener.service
+package ru.wolfofbad.botlistener.bot
 
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener
@@ -9,8 +9,8 @@ import jakarta.annotation.PostConstruct
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import ru.wolfofbad.botlistener.service.command.Command
-import ru.wolfofbad.botlistener.service.command.CommandParser
+import ru.wolfofbad.botlistener.bot.command.Command
+import ru.wolfofbad.botlistener.bot.command.CommandParser
 
 @Service
 class BotService(

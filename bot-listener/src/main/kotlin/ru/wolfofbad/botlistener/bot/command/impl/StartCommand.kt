@@ -1,29 +1,29 @@
-package ru.wolfofbad.botlistener.service.command.impl
+package ru.wolfofbad.botlistener.bot.command.impl
 
 import com.pengrad.telegrambot.model.Update
 import org.apache.logging.log4j.LogManager
 import ru.wolfofbad.botlistener.kafka.AuthorizationQueueProducer
 import ru.wolfofbad.botlistener.dto.request.AuthorizeRequest
-import ru.wolfofbad.botlistener.service.command.Command
-import ru.wolfofbad.botlistener.service.command.parseTgId
+import ru.wolfofbad.botlistener.bot.command.Command
+import ru.wolfofbad.botlistener.bot.command.parseTgId
 
-class ResetCommand(
+class StartCommand(
     private val authorizationQueueProducer: AuthorizationQueueProducer
 ) : Command {
     private val logger = LogManager.getLogger()
 
     override fun getMessage(): String {
-        return "Сбросить все отслеживаемые ссылки"
+        return "Начать работу с ботом"
     }
 
     override fun getCommand(): String {
-        return "reset"
+        return "start"
     }
 
     override fun execute(update: Update) {
         val id = parseTgId(update) ?: return Unit
             .also { logger.error("Update has null id") }
 
-        authorizationQueueProducer.sendAuthorizationRequest(AuthorizeRequest(id, AuthorizeRequest.Type.RESET))
+        authorizationQueueProducer.sendAuthorizationRequest(AuthorizeRequest(id, AuthorizeRequest.Type.START))
     }
 }

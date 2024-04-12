@@ -1,11 +1,11 @@
-package ru.wolfofbad.botlistener.service.command
+package ru.wolfofbad.botlistener.bot.command
 
 import com.pengrad.telegrambot.model.MessageEntity
 import com.pengrad.telegrambot.model.Update
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import ru.wolfofbad.botlistener.service.command.impl.NotCommandFail
-import ru.wolfofbad.botlistener.service.command.impl.UnknownCommandFail
+import ru.wolfofbad.botlistener.bot.command.impl.NotCommandFail
+import ru.wolfofbad.botlistener.bot.command.impl.UnknownCommandFail
 
 @Service
 class CommandParser(

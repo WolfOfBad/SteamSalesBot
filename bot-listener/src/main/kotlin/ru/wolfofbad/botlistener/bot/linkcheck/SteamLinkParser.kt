@@ -1,4 +1,4 @@
-package ru.wolfofbad.botlistener.service.linkcheck
+package ru.wolfofbad.botlistener.bot.linkcheck
 
 import java.net.URI
 

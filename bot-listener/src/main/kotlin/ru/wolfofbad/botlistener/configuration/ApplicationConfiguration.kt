@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.wolfofbad.botlistener.kafka.AuthorizationQueueProducer
 import ru.wolfofbad.botlistener.kafka.MessagesQueueProducer
-import ru.wolfofbad.botlistener.service.command.Command
-import ru.wolfofbad.botlistener.service.command.impl.*
-import ru.wolfofbad.botlistener.service.linkcheck.LinkChecker
-import ru.wolfofbad.botlistener.service.linkcheck.SteamLinkParser
+import ru.wolfofbad.botlistener.bot.command.Command
+import ru.wolfofbad.botlistener.bot.command.impl.*
+import ru.wolfofbad.botlistener.bot.linkcheck.LinkChecker
+import ru.wolfofbad.botlistener.bot.linkcheck.SteamLinkParser
 
 @Configuration
 class ApplicationConfiguration {

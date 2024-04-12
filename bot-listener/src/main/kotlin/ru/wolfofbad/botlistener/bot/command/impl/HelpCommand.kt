@@ -1,11 +1,11 @@
-package ru.wolfofbad.botlistener.service.command.impl
+package ru.wolfofbad.botlistener.bot.command.impl
 
 import com.pengrad.telegrambot.model.Update
 import org.apache.logging.log4j.LogManager
 import ru.wolfofbad.botlistener.dto.request.UpdateRequest
 import ru.wolfofbad.botlistener.kafka.MessagesQueueProducer
-import ru.wolfofbad.botlistener.service.command.Command
-import ru.wolfofbad.botlistener.service.command.parseTgId
+import ru.wolfofbad.botlistener.bot.command.Command
+import ru.wolfofbad.botlistener.bot.command.parseTgId
 
 class HelpCommand(
     private val messagesQueueProducer: MessagesQueueProducer,

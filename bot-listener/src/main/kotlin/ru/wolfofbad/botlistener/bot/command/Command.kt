@@ -1,4 +1,4 @@
-package ru.wolfofbad.botlistener.service.command
+package ru.wolfofbad.botlistener.bot.command
 
 import com.pengrad.telegrambot.model.MessageEntity
 import com.pengrad.telegrambot.model.Update

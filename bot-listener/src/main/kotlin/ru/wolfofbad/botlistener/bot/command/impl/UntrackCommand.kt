@@ -1,4 +1,4 @@
-package ru.wolfofbad.botlistener.service.command.impl
+package ru.wolfofbad.botlistener.bot.command.impl
 
 import com.pengrad.telegrambot.model.Update
 import org.apache.logging.log4j.LogManager
@@ -6,12 +6,12 @@ import ru.wolfofbad.botlistener.dto.request.LinkRequest
 import ru.wolfofbad.botlistener.dto.request.UpdateRequest
 import ru.wolfofbad.botlistener.kafka.AuthorizationQueueProducer
 import ru.wolfofbad.botlistener.kafka.MessagesQueueProducer
-import ru.wolfofbad.botlistener.service.command.Command
-import ru.wolfofbad.botlistener.service.command.getLinkFromUpdate
-import ru.wolfofbad.botlistener.service.command.parseTgId
-import ru.wolfofbad.botlistener.service.linkcheck.LinkChecker
+import ru.wolfofbad.botlistener.bot.command.Command
+import ru.wolfofbad.botlistener.bot.command.getLinkFromUpdate
+import ru.wolfofbad.botlistener.bot.command.parseTgId
+import ru.wolfofbad.botlistener.bot.linkcheck.LinkChecker
 
-class TrackCommand(
+class UntrackCommand(
     private val authorizationQueueProducer: AuthorizationQueueProducer,
     private val messagesQueueProducer: MessagesQueueProducer,
     private val linkChecker: LinkChecker
@@ -19,11 +19,11 @@ class TrackCommand(
     private val logger = LogManager.getLogger()
 
     override fun getMessage(): String {
-        return "Начать отслеживание ссылки"
+        return "Прекратить отслеживание ссылки"
     }
 
     override fun getCommand(): String {
-        return "track"
+        return "untrack"
     }
 
     override fun execute(update: Update) {
@@ -33,7 +33,10 @@ class TrackCommand(
         val text = getLinkFromUpdate(update) ?: return Unit
             .also {
                 messagesQueueProducer.sendRequest(
-                    UpdateRequest(id, "Чтобы начать отслеживать ресурс, отправьте /track и ссылку на этот ресурс")
+                    UpdateRequest(
+                        id,
+                        "Чтобы прекратить отслеживать ресурс, отправьте /untrack и ссылку на этот ресурс"
+                    )
                 )
             }
 
@@ -47,6 +50,6 @@ class TrackCommand(
                 )
             }
 
-        authorizationQueueProducer.sendLinkRequest(LinkRequest(id, link, LinkRequest.Type.TRACK))
+        authorizationQueueProducer.sendLinkRequest(LinkRequest(id, link, LinkRequest.Type.UNTRACK))
     }
 }
