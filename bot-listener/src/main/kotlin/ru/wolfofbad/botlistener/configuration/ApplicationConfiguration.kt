@@ -39,8 +39,8 @@ class ApplicationConfiguration {
     }
 
     @Bean("linkChainParser")
-    fun linkChainParser() : LinkChecker {
-        return LinkChecker.LinkCheckerManager.link(
+    fun linkChainParser(): LinkChecker {
+        return LinkChecker.link(
             SteamLinkParser()
         )
     }
