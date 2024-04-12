@@ -1,0 +1,22 @@
+settings:
+  topics:
+    blacklist:
+      prefixed:
+        - _confluent
+
+topics:
+  send-messages:
+    partitions: 4
+    replication: 3
+
+  send-messages_dlq:
+    partitions: 2
+    replication: 3
+
+  authorization:
+    partitions: 4
+    replication: 3
+
+  authorization_dlq:
+    partitions: 2
+    replication: 3
