@@ -1,0 +1,26 @@
+bot:
+  token: ${TELEGRAM_TOKEN}
+
+kafka:
+  messages-topic:
+    name: send-messages
+    bootstrap-address: http://localhost:9092
+    listener-id: bot-sender
+
+backoff:
+  telegram-bot:
+    attempts: 5
+    type: exponential
+    wait-time: 1s
+
+spring:
+  application:
+    name: bot-service
+  jackson:
+    time-zone: UTC
+
+server:
+  port: 8091
+
+logging:
+  config: classpath:log4j2-plain.xml
