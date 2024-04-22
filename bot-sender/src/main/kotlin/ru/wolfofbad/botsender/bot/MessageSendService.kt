@@ -16,7 +16,6 @@ class MessageSendService(
     @Qualifier("telegramBackoff")
     private val backoff: BackoffPolicy
 ) {
-    private val queue: ArrayDeque<UpdateRequest> = ArrayDeque()
 
     fun sendMessage(request: UpdateRequest) {
         val telegramRequest = SendMessage(request.telegramChatId, request.message)
