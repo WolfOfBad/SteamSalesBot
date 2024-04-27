@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.context.properties.bind.Name
 import org.springframework.context.annotation.Bean
-import ru.wolfofbad.botlistener.retry.policy.BackoffPolicy
+import ru.wolfofbad.botsender.retry.policy.BackoffPolicy
 import ru.wolfofbad.botsender.retry.BackoffType
 import ru.wolfofbad.botsender.retry.policy.ConstantBackoff
 import ru.wolfofbad.botsender.retry.policy.ExponentialBackoff

@@ -1,6 +1,5 @@
 package ru.wolfofbad.botsender.retry.policy
 
-import ru.wolfofbad.botlistener.retry.policy.BackoffPolicy
 import ru.wolfofbad.botsender.configuration.BackoffConfiguration
 import kotlin.math.pow
 import kotlin.time.Duration

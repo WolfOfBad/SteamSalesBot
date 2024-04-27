@@ -1,4 +1,4 @@
-package ru.wolfofbad.botlistener.retry.policy
+package ru.wolfofbad.botsender.retry.policy
 
 import kotlin.time.Duration
 
