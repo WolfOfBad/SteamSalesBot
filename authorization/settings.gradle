@@ -1,0 +1,2 @@
+rootProject.name = 'authorization'
+rootProject.setProjectDir(new File('./authorization'))

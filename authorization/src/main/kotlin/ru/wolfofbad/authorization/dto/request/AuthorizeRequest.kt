@@ -1,4 +1,4 @@
-package ru.wolfofbad.botlistener.dto.request
+package ru.wolfofbad.authorization.dto.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

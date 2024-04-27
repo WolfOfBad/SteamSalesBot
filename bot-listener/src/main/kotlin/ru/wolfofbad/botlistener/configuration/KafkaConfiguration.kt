@@ -30,6 +30,7 @@ data class KafkaConfiguration(
         props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = messagesTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+        props[JsonSerializer.TYPE_MAPPINGS] = "updateRequest:ru.wolfofbad.botlistener.dto.request.UpdateRequest"
 
         return DefaultKafkaProducerFactory(props)
     }
@@ -45,9 +46,10 @@ data class KafkaConfiguration(
         props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
-        props[JsonSerializer.TYPE_MAPPINGS] = "authorize:  ru.wolfofbad.botlistener.dto.request.AuthorizeRequest, " +
-            "link:ru.wolfofbad.botlistener.dto.request.LinkRequest, " +
-            "list-link:ru.wolfofbad.botlistener.dto.request.ListLinkRequest"
+        props[JsonSerializer.TYPE_MAPPINGS] =
+            "authorizeRequest:ru.wolfofbad.botlistener.dto.request.AuthorizeRequest, " +
+                "linkRequest:ru.wolfofbad.botlistener.dto.request.LinkRequest, " +
+                "listLinkRequest:ru.wolfofbad.botlistener.dto.request.ListLinkRequest"
 
         return DefaultKafkaProducerFactory(props)
     }

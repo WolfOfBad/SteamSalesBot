@@ -1,0 +1,17 @@
+kafka:
+  authorization-topic:
+    name: authorization
+    bootstrap-address: http://localhost:9092
+    listener-id: authorization-service
+
+spring:
+  application:
+    name: bot-service
+  jackson:
+    time-zone: UTC
+
+server:
+  port: 8092
+
+logging:
+  config: classpath:log4j2-plain.xml

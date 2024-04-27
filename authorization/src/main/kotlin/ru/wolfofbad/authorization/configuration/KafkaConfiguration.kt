@@ -1,4 +1,4 @@
-package ru.wolfofbad.botsender.configuration
+package ru.wolfofbad.authorization.configuration
 
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
@@ -9,7 +9,6 @@ import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.Name
 import org.springframework.context.annotation.Bean
-import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.*
 import org.springframework.kafka.support.converter.RecordMessageConverter
@@ -17,20 +16,20 @@ import org.springframework.kafka.support.converter.StringJsonMessageConverter
 import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper
 import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper
 import org.springframework.kafka.support.serializer.JsonDeserializer
-import ru.wolfofbad.botsender.dto.request.UpdateRequest
+import ru.wolfofbad.authorization.dto.request.AuthorizeRequest
+import ru.wolfofbad.authorization.dto.request.LinkRequest
+import ru.wolfofbad.authorization.dto.request.ListLinkRequest
 
-
-@ConfigurationProperties(prefix = "kafka", ignoreUnknownFields = false)
-@EnableKafka
+@ConfigurationProperties(prefix = "kafka")
 data class KafkaConfiguration(
     @NotNull
-    @Name("messages-topic")
-    val messagesTopic: TopicConfig
+    @Name("authorization-topic")
+    val authorizationTopic: TopicConfig,
 ) {
     @Bean
-    fun dlqMessagesProducerFactory(): ProducerFactory<String, String> {
+    fun dlqAuthorizationProducerFactory(): ProducerFactory<String, String> {
         val props: MutableMap<String, Any> = HashMap()
-        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = messagesTopic.bootstrapAddress
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
 
@@ -38,15 +37,15 @@ data class KafkaConfiguration(
     }
 
     @Bean
-    fun dlqMessagesKafkaTemplate(): KafkaTemplate<String, String> {
-        return KafkaTemplate(dlqMessagesProducerFactory())
+    fun dlqAuthorizationKafkaTemplate(): KafkaTemplate<String, String> {
+        return KafkaTemplate(dlqAuthorizationProducerFactory())
     }
 
     @Bean
-    fun consumerFactory(): ConsumerFactory<String, UpdateRequest> {
-        val props: MutableMap<String, Any> = HashMap()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = messagesTopic.bootstrapAddress
-        props[ConsumerConfig.GROUP_ID_CONFIG] = messagesTopic.listenerId
+    fun authorizeKafkaConsumerFactory(): ConsumerFactory<String, Any> {
+        val props = HashMap<String, Any>()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationTopic.bootstrapAddress
+        props[ConsumerConfig.GROUP_ID_CONFIG] = authorizationTopic.listenerId
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[JsonDeserializer.TRUSTED_PACKAGES] = "*"
@@ -55,11 +54,11 @@ data class KafkaConfiguration(
     }
 
     @Bean
-    fun kafkaMessagesListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, UpdateRequest> {
-        val factory =
-            ConcurrentKafkaListenerContainerFactory<String, UpdateRequest>()
-        factory.consumerFactory = consumerFactory()
+    fun authorizeKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
+        factory.consumerFactory = authorizeKafkaConsumerFactory()
         factory.setRecordMessageConverter(jsonConverter())
+
         return factory
     }
 
@@ -71,7 +70,9 @@ data class KafkaConfiguration(
         typeMapper.addTrustedPackages("*")
 
         val mappings = HashMap<String, Class<*>>()
-        mappings["updateRequest"] = UpdateRequest::class.java
+        mappings["authorizeRequest"] = AuthorizeRequest::class.java
+        mappings["linkRequest"] = LinkRequest::class.java
+        mappings["listLinkRequest"] = ListLinkRequest::class.java
         typeMapper.idClassMapping = mappings
 
         converter.typeMapper = typeMapper

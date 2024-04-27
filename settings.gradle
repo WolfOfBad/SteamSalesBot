@@ -4,4 +4,4 @@ plugins {
 rootProject.name = 'SteamSalesBot'
 include 'bot-listener'
 include 'bot-sender'
-
+include 'authorization'
