@@ -16,15 +16,29 @@ import org.springframework.kafka.support.converter.StringJsonMessageConverter
 import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper
 import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper
 import org.springframework.kafka.support.serializer.JsonDeserializer
+import org.springframework.kafka.support.serializer.JsonSerializer
 import ru.wolfofbad.authorization.dto.request.AuthorizeRequest
 import ru.wolfofbad.authorization.dto.request.LinkRequest
 import ru.wolfofbad.authorization.dto.request.ListLinkRequest
+import ru.wolfofbad.authorization.dto.request.UpdateRequest
 
 @ConfigurationProperties(prefix = "kafka")
 data class KafkaConfiguration(
     @NotNull
     @Name("authorization-topic")
     val authorizationTopic: TopicConfig,
+
+    @NotNull
+    @Name("authorization_dlq-topic")
+    val authorizationDlqTopic: TopicConfig,
+
+    @NotNull
+    @Name("messages-topic")
+    val messagesTopic: TopicConfig,
+
+    @NotNull
+    @Name("subscription-topic")
+    val subscriptionTopic: TopicConfig
 ) {
     @Bean
     fun dlqAuthorizationProducerFactory(): ProducerFactory<String, String> {
@@ -77,6 +91,40 @@ data class KafkaConfiguration(
 
         converter.typeMapper = typeMapper
         return converter
+    }
+
+    @Bean
+    fun updatesProducerFactory(): ProducerFactory<String, UpdateRequest> {
+        val props: MutableMap<String, Any> = HashMap()
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = messagesTopic.bootstrapAddress
+        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
+        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+        props[JsonSerializer.TYPE_MAPPINGS] = "updateRequest:ru.wolfofbad.authorization.dto.request.UpdateRequest"
+
+        return DefaultKafkaProducerFactory(props)
+    }
+
+    @Bean
+    fun updatesKafkaTemplate(): KafkaTemplate<String, UpdateRequest> {
+        return KafkaTemplate(updatesProducerFactory())
+    }
+
+    @Bean
+    fun subscriptionProducerFactory(): ProducerFactory<String, Any> {
+        val props: MutableMap<String, Any> = HashMap()
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = subscriptionTopic.bootstrapAddress
+        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
+        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+        props[JsonSerializer.TYPE_MAPPINGS] =
+            "deleteUserRequest:ru.wolfofbad.authorization.dto.request.DeleteUserRequest, " +
+                "subscribeRequest:ru.wolfofbad.authorization.dto.request.SubscribeRequest"
+
+        return DefaultKafkaProducerFactory(props)
+    }
+
+    @Bean
+    fun authorizationKafkaTemplate(): KafkaTemplate<String, Any> {
+        return KafkaTemplate(subscriptionProducerFactory())
     }
 
     class TopicConfig(

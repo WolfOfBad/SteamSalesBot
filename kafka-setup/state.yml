@@ -20,3 +20,11 @@ topics:
   authorization_dlq:
     partitions: 2
     replication: 3
+
+  subscription:
+    partitions: 4
+    replication: 3
+
+  subscription_dlq:
+    partitions: 2
+    replication: 3
