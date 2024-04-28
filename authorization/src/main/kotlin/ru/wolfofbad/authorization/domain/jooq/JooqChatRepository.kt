@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository
 import ru.wolfofbad.authorization.domain.ChatRepository
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.references.CHAT
 import ru.wolfofbad.authorization.dto.TgChat
-import kotlin.jvm.optionals.getOrNull
 
 @Repository
 class JooqChatRepository(
@@ -15,8 +14,9 @@ class JooqChatRepository(
         return jooq.select(*CHAT.fields())
             .from(CHAT)
             .where(CHAT.TG_CHAT_ID.eq(tgChatId))
-            .fetchOptionalInto(TgChat::class.java)
-            .getOrNull()
+            .limit(1)
+            .fetchInto(TgChat::class.java)
+            .firstOrNull()
     }
 
     override fun add(tgChatId: Long): TgChat {

@@ -17,10 +17,10 @@ import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper
 import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.kafka.support.serializer.JsonSerializer
-import ru.wolfofbad.authorization.dto.request.AuthorizeRequest
-import ru.wolfofbad.authorization.dto.request.LinkRequest
-import ru.wolfofbad.authorization.dto.request.ListLinkRequest
-import ru.wolfofbad.authorization.dto.request.UpdateRequest
+import ru.wolfofbad.authorization.dto.request.bot.AuthorizeRequest
+import ru.wolfofbad.authorization.dto.request.bot.LinkRequest
+import ru.wolfofbad.authorization.dto.request.bot.ListLinkRequest
+import ru.wolfofbad.authorization.dto.request.bot.UpdateRequest
 
 @ConfigurationProperties(prefix = "kafka")
 data class KafkaConfiguration(
@@ -99,7 +99,7 @@ data class KafkaConfiguration(
         props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = messagesTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
-        props[JsonSerializer.TYPE_MAPPINGS] = "updateRequest:ru.wolfofbad.authorization.dto.request.UpdateRequest"
+        props[JsonSerializer.TYPE_MAPPINGS] = "updateRequest:ru.wolfofbad.authorization.dto.request.bot.UpdateRequest"
 
         return DefaultKafkaProducerFactory(props)
     }
@@ -116,8 +116,9 @@ data class KafkaConfiguration(
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
         props[JsonSerializer.TYPE_MAPPINGS] =
-            "deleteUserRequest:ru.wolfofbad.authorization.dto.request.DeleteUserRequest, " +
-                "subscribeRequest:ru.wolfofbad.authorization.dto.request.SubscribeRequest"
+            "deleteUserRequest:ru.wolfofbad.authorization.dto.request.subscription.DeleteRequest, " +
+                "subscribeRequest:ru.wolfofbad.authorization.dto.request.subscription.SubscribeRequest, " +
+                "listLinksRequest:ru.wolfofbad.authorization.dto.request.subscription.ListLinkRequest"
 
         return DefaultKafkaProducerFactory(props)
     }

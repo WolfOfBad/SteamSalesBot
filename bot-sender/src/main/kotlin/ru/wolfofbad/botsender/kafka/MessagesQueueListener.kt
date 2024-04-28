@@ -53,7 +53,7 @@ class MessagesQueueListener(
             """{
                 |   bad-request: $request
                 |}
-            """.trimMargin()
+            """
         )
     }
 }

@@ -7,12 +7,13 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import ru.wolfofbad.authorization.configuration.KafkaConfiguration
-import ru.wolfofbad.authorization.dto.request.AuthorizeRequest
-import ru.wolfofbad.authorization.dto.request.LinkRequest
-import ru.wolfofbad.authorization.dto.request.ListLinkRequest
-import ru.wolfofbad.authorization.dto.request.UpdateRequest
+import ru.wolfofbad.authorization.dto.request.bot.AuthorizeRequest
+import ru.wolfofbad.authorization.dto.request.bot.LinkRequest
+import ru.wolfofbad.authorization.dto.request.bot.ListLinkRequest
+import ru.wolfofbad.authorization.dto.request.bot.UpdateRequest
 import ru.wolfofbad.authorization.exception.SendMessageException
 import ru.wolfofbad.authorization.service.ChatService
+import ru.wolfofbad.authorization.service.LinkService
 
 @Service
 @KafkaListener(
@@ -27,6 +28,8 @@ class KafkaAuthorizationRequestConsumer(
     private val updatesTemplate: KafkaTemplate<String, UpdateRequest>,
 
     private val chatService: ChatService,
+    private val linkService: LinkService,
+
     config: KafkaConfiguration
 ) {
     private val logger = LogManager.getLogger(KafkaAuthorizationRequestConsumer::class.java)
@@ -54,8 +57,12 @@ class KafkaAuthorizationRequestConsumer(
     @KafkaHandler
     fun handleLinkRequest(request: LinkRequest) {
         try {
-            TODO()
-            logger.info(request.toString())
+            linkService.handleLink(request)
+        } catch (exception: SendMessageException) {
+            updatesTemplate.send(
+                updatesTopicName,
+                UpdateRequest(request.telegramChatId, exception.getTelegramMessage())
+            )
         } catch (exception: Exception) {
             sendExceptionToDlq(request.toString(), exception)
         }
@@ -64,8 +71,12 @@ class KafkaAuthorizationRequestConsumer(
     @KafkaHandler
     fun handleListLinkRequest(request: ListLinkRequest) {
         try {
-            TODO()
-            logger.info(request.toString())
+            linkService.getLinks(request)
+        } catch (exception: SendMessageException) {
+            updatesTemplate.send(
+                updatesTopicName,
+                UpdateRequest(request.telegramChatId, exception.getTelegramMessage())
+            )
         } catch (exception: Exception) {
             sendExceptionToDlq(request.toString(), exception)
         }
@@ -78,7 +89,7 @@ class KafkaAuthorizationRequestConsumer(
             dlqTopicName, """{
             |   bad-request: $request
             |}
-        """.trimMargin()
+        """
         )
     }
 
@@ -92,7 +103,7 @@ class KafkaAuthorizationRequestConsumer(
             |       $exception
             |   }
             |}
-        """.trimMargin()
+        """
         )
     }
 }
