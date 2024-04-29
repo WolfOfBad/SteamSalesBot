@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: links
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sales-bot
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: false
+  jackson:
+    time-zone: UTC
+
+server:
+  port: 8093
+
+logging:
+  config: classpath:log4j2-plain.xml

@@ -6,4 +6,5 @@ include 'bot-listener'
 include 'bot-sender'
 include 'authorization'
 include 'jooq-codegen'
+include 'links'
 
