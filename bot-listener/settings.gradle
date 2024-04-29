@@ -1,2 +1,0 @@
-rootProject.name = 'bot-listener'
-rootProject.setProjectDir(new File('./bot-listener'))

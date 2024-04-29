@@ -1,2 +1,0 @@
-rootProject.name = 'bot-sender'
-rootProject.setProjectDir(new File('./bot-sender'))
