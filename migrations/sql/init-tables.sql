@@ -20,8 +20,17 @@ create index uri_index on link (uri);
 
 create table if not exists chat_link
 (
-    chat_id bigint not null,
-    link_id bigint not null,
+    chat_id bigint                      not null,
+    link_id bigint references link (id) not null,
 
     unique (chat_id, link_id)
-)
+);
+
+create table if not exists steam_link
+(
+    id  bigint not null,
+    uri text   not null,
+
+    primary key (id)
+);
+create index uri_index on steam_link(uri)
