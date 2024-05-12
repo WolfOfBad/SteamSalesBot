@@ -9,11 +9,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.ChatLink
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.Link
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.records.ChatLinkRecord
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.records.ChatRecord
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.records.LinkRecord
 
 
 
@@ -23,6 +19,3 @@ import ru.wolfofbad.authorization.domain.jooq.generated.tables.records.LinkRecor
 
 val CONSTRAINT_1: UniqueKey<ChatRecord> = Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1"), arrayOf(Chat.CHAT.ID), true)
 val CONSTRAINT_1F: UniqueKey<ChatRecord> = Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1F"), arrayOf(Chat.CHAT.TG_CHAT_ID), true)
-val CONSTRAINT_8: UniqueKey<ChatLinkRecord> = Internal.createUniqueKey(ChatLink.CHAT_LINK, DSL.name("CONSTRAINT_8"), arrayOf(ChatLink.CHAT_LINK.CHAT_ID, ChatLink.CHAT_LINK.LINK_ID), true)
-val CONSTRAINT_2: UniqueKey<LinkRecord> = Internal.createUniqueKey(Link.LINK, DSL.name("CONSTRAINT_2"), arrayOf(Link.LINK.ID), true)
-val CONSTRAINT_23: UniqueKey<LinkRecord> = Internal.createUniqueKey(Link.LINK, DSL.name("CONSTRAINT_23"), arrayOf(Link.LINK.URI), true)

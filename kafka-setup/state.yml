@@ -21,10 +21,26 @@ topics:
     partitions: 2
     replication: 3
 
-  subscription:
+  authorization-messages:
     partitions: 4
     replication: 3
 
-  subscription_dlq:
+  authorization-messages_dlq:
+    partitions: 2
+    replication: 3
+
+  link:
+    partitions: 4
+    replication: 3
+
+  link_dlq:
+    partitions: 2
+    replication: 3
+
+  steam-service:
+    partitions: 4
+    replication: 3
+
+  steam-service_dlq:
     partitions: 2
     replication: 3

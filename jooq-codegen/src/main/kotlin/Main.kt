@@ -5,18 +5,24 @@ import org.jooq.meta.jaxb.*
 import org.jooq.meta.jaxb.Target
 
 fun main() {
-    val target = Target()
+    val authorization = Target()
         .withPackageName("ru.wolfofbad.authorization.domain.jooq.generated")
         .withDirectory("authorization/src/main/kotlin")
+    val authorizationPath = "migrations/authorization"
+    generateCode(authorization, authorizationPath)
 
-    generateCode(target)
+    val link = Target()
+        .withPackageName("ru.wolfofbad.links.domain.jooq.generated")
+        .withDirectory("links/src/main/kotlin")
+    val linkPath = "migrations/link"
+    generateCode(link, linkPath)
 }
 
-fun generateCode(target: Target) {
+fun generateCode(target: Target, path: String) {
     val database = Database()
         .withName("org.jooq.meta.extensions.liquibase.LiquibaseDatabase")
         .withProperties(
-            Property().withKey("rootPath").withValue("migrations"),
+            Property().withKey("rootPath").withValue(path),
             Property().withKey("scripts").withValue("master.yml")
         );
 

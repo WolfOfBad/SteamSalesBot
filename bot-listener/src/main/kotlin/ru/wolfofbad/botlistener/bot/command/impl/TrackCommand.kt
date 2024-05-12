@@ -4,8 +4,8 @@ import com.pengrad.telegrambot.model.Update
 import org.apache.logging.log4j.LogManager
 import ru.wolfofbad.botlistener.dto.request.LinkRequest
 import ru.wolfofbad.botlistener.dto.request.UpdateRequest
-import ru.wolfofbad.botlistener.kafka.AuthorizationQueueProducer
-import ru.wolfofbad.botlistener.kafka.MessagesQueueProducer
+import ru.wolfofbad.botlistener.kafka.producer.AuthorizationQueueProducer
+import ru.wolfofbad.botlistener.kafka.producer.MessagesQueueProducer
 import ru.wolfofbad.botlistener.bot.command.Command
 import ru.wolfofbad.botlistener.bot.command.getLinkFromUpdate
 import ru.wolfofbad.botlistener.bot.command.parseTgId

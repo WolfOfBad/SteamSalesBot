@@ -4,15 +4,15 @@ import org.springframework.stereotype.Service
 import ru.wolfofbad.authorization.domain.ChatRepository
 import ru.wolfofbad.authorization.dto.request.bot.LinkRequest
 import ru.wolfofbad.authorization.dto.request.bot.ListLinkRequest
-import ru.wolfofbad.authorization.dto.request.subscription.SubscribeRequest
+import ru.wolfofbad.authorization.dto.request.link.SubscribeRequest
 import ru.wolfofbad.authorization.exception.NoSuchChatException
-import ru.wolfofbad.authorization.kafka.KafkaSubscriptionQueueProducer
+import ru.wolfofbad.authorization.kafka.producer.KafkaLinkQueueProducer
 import ru.wolfofbad.authorization.service.LinkService
 
 @Service
 class JooqLinkService(
     private val repository: ChatRepository,
-    private val producer: KafkaSubscriptionQueueProducer
+    private val producer: KafkaLinkQueueProducer
 ): LinkService {
     override fun handleLink(request: LinkRequest) {
         val chat = repository.getByTgChatId(request.telegramChatId) ?: throw NoSuchChatException()

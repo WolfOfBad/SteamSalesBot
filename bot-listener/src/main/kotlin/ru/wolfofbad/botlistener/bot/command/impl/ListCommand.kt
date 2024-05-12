@@ -2,7 +2,7 @@ package ru.wolfofbad.botlistener.bot.command.impl
 
 import com.pengrad.telegrambot.model.Update
 import org.apache.logging.log4j.LogManager
-import ru.wolfofbad.botlistener.kafka.AuthorizationQueueProducer
+import ru.wolfofbad.botlistener.kafka.producer.AuthorizationQueueProducer
 import ru.wolfofbad.botlistener.dto.request.ListLinkRequest
 import ru.wolfofbad.botlistener.bot.command.Command
 import ru.wolfofbad.botlistener.bot.command.parseTgId

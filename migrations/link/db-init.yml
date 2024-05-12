@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: "init_tables"
+      author: "WolfOfBad"
+      sqlFile:
+        path: sql/init-tables.sql
+        relativeToChangelogFile: true

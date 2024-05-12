@@ -13,8 +13,6 @@ import org.jooq.Table
 import org.jooq.impl.SchemaImpl
 
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.ChatLink
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.Link
 
 
 /**
@@ -42,21 +40,9 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
      */
     val CHAT: Chat get() = Chat.CHAT
 
-    /**
-     * The table <code>CHAT_LINK</code>.
-     */
-    val CHAT_LINK: ChatLink get() = ChatLink.CHAT_LINK
-
-    /**
-     * The table <code>LINK</code>.
-     */
-    val LINK: Link get() = Link.LINK
-
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
-        Chat.CHAT,
-        ChatLink.CHAT_LINK,
-        Link.LINK
+        Chat.CHAT
     )
 }

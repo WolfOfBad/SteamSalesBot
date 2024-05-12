@@ -19,7 +19,7 @@ abstract class LinkChecker {
             result = "https://$result"
         }
 
-        return result
+        return result.trim()
     }
 
     companion object LinkCheckerManager {

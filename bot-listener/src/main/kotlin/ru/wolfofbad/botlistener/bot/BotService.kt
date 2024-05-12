@@ -11,14 +11,19 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import ru.wolfofbad.botlistener.bot.command.Command
 import ru.wolfofbad.botlistener.bot.command.CommandParser
+import ru.wolfofbad.botlistener.kafka.producer.MessagesQueueProducer
 
 @Service
 class BotService(
     private val bot: TelegramBot,
     private val commandParser: CommandParser,
+
+    private val messagesProducer: MessagesQueueProducer,
+
     @Qualifier("commandMap")
-    commands: LinkedHashMap<String, Command>
+    commands: LinkedHashMap<String, Command>,
 ) : UpdatesListener, AutoCloseable {
+    private val logger = LogManager.getLogger(BotService::class.java.name)
 
     init {
         setCommandsMenu(commands)
@@ -37,7 +42,6 @@ class BotService(
 
         val response = bot.execute(request)
 
-        val logger = LogManager.getLogger()
         if (response.isOk) {
             logger.info("Commands menu successfully set")
         } else {
@@ -47,10 +51,15 @@ class BotService(
 
     override fun process(updates: MutableList<Update>?): Int {
         for (update in updates!!) {
-            update.message() ?: continue
+            try {
+                update.message() ?: continue
 
-            val command = commandParser.parse(update)
-            command.execute(update)
+                val command = commandParser.parse(update)
+                command.execute(update)
+            } catch (e: Exception) {
+                logger.error(e.message)
+                messagesProducer.sendDlqMessage(e)
+            }
         }
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL

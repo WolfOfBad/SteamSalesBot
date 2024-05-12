@@ -19,6 +19,15 @@ class JooqChatRepository(
             .firstOrNull()
     }
 
+    override fun getById(id: Long): TgChat? {
+        return jooq.select(*CHAT.fields())
+            .from(CHAT)
+            .where(CHAT.ID.eq(id))
+            .limit(1)
+            .fetchInto(TgChat::class.java)
+            .firstOrNull()
+    }
+
     override fun add(tgChatId: Long): TgChat {
         return jooq.insertInto(CHAT)
             .columns(CHAT.TG_CHAT_ID)

@@ -123,7 +123,7 @@ services:
       - zookeeper2
       - zookeeper3
 
-  kafka_gitops:
+  kafka-gitops:
     image: devshawn/kafka-gitops:0.2.15
     hostname: kafka_gitops
     container_name: kafka_gitops
@@ -141,39 +141,73 @@ services:
       - kafka2
       - kafka3
 
-  postgresql:
+
+
+  authorization-db:
     image: postgres:16
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: sales-bot
+      POSTGRES_DB: authorization
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - postgresql:/var/lib/postgresql/data
+      - authorizationPostgres:/var/lib/postgresql/data
     networks:
       - backend
 
-  liquibase-migrations:
+  authorization-migrations:
     image: liquibase/liquibase:4.25
-    depends_on:
-      - postgresql
     command:
       - --changelog-file=master.yml
       - --driver=org.postgresql.Driver
-      - --url=jdbc:postgresql://postgresql:5432/sales-bot
+      - --url=jdbc:postgresql://authorization-db:5432/authorization
       - --username=postgres
       - --password=postgres
       - update
     volumes:
-      - ./migrations:/liquibase/changelog
+      - ./migrations/authorization:/liquibase/changelog
     networks:
       - backend
+    depends_on:
+      - authorization-db
+
+
+
+  link-db:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: link
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - linkPostgres:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  link-migrations:
+    image: liquibase/liquibase:4.25
+    command:
+      - --changelog-file=master.yml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://link-db:5432/link
+      - --username=postgres
+      - --password=postgres
+      - update
+    volumes:
+      - ./migrations/link:/liquibase/changelog
+    networks:
+      - backend
+    depends_on:
+      - link-db
 
 volumes:
   kafka: { }
   zookeeper: { }
-  postgresql: { }
+  authorizationPostgres: { }
+  linkPostgres: { }
 
 networks:
   kafka_network: { }

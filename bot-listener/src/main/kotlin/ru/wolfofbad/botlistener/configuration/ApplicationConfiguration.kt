@@ -3,8 +3,8 @@ package ru.wolfofbad.botlistener.configuration
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.wolfofbad.botlistener.kafka.AuthorizationQueueProducer
-import ru.wolfofbad.botlistener.kafka.MessagesQueueProducer
+import ru.wolfofbad.botlistener.kafka.producer.AuthorizationQueueProducer
+import ru.wolfofbad.botlistener.kafka.producer.MessagesQueueProducer
 import ru.wolfofbad.botlistener.bot.command.Command
 import ru.wolfofbad.botlistener.bot.command.impl.*
 import ru.wolfofbad.botlistener.bot.linkcheck.LinkChecker

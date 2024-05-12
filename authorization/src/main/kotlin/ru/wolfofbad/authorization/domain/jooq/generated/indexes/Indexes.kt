@@ -9,7 +9,6 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
-import ru.wolfofbad.authorization.domain.jooq.generated.tables.Link
 
 
 
@@ -18,4 +17,3 @@ import ru.wolfofbad.authorization.domain.jooq.generated.tables.Link
 // -------------------------------------------------------------------------
 
 val TG_CHAT_ID_INDEX: Index = Internal.createIndex(DSL.name("TG_CHAT_ID_INDEX"), Chat.CHAT, arrayOf(Chat.CHAT.TG_CHAT_ID), false)
-val URI_INDEX: Index = Internal.createIndex(DSL.name("URI_INDEX"), Link.LINK, arrayOf(Link.LINK.URI), false)

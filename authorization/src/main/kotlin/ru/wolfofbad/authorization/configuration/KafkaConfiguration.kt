@@ -21,6 +21,7 @@ import ru.wolfofbad.authorization.dto.request.bot.AuthorizeRequest
 import ru.wolfofbad.authorization.dto.request.bot.LinkRequest
 import ru.wolfofbad.authorization.dto.request.bot.ListLinkRequest
 import ru.wolfofbad.authorization.dto.request.bot.UpdateRequest
+import ru.wolfofbad.authorization.dto.request.link.SendMessageRequest
 
 @ConfigurationProperties(prefix = "kafka")
 data class KafkaConfiguration(
@@ -37,13 +38,21 @@ data class KafkaConfiguration(
     val messagesTopic: TopicConfig,
 
     @NotNull
-    @Name("subscription-topic")
-    val subscriptionTopic: TopicConfig
+    @Name("link-topic")
+    val linkTopic: TopicConfig,
+
+    @NotNull
+    @Name("authorization-messages-topic")
+    val authorizationMessagesTopic: TopicConfig,
+
+    @NotNull
+    @Name("authorization-messages_dlq-topic")
+    val authorizationMessagesDlqTopic: TopicConfig,
 ) {
     @Bean
     fun dlqAuthorizationProducerFactory(): ProducerFactory<String, String> {
         val props: MutableMap<String, Any> = HashMap()
-        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationTopic.bootstrapAddress
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationDlqTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
 
@@ -71,13 +80,13 @@ data class KafkaConfiguration(
     fun authorizeKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
         factory.consumerFactory = authorizeKafkaConsumerFactory()
-        factory.setRecordMessageConverter(jsonConverter())
+        factory.setRecordMessageConverter(authorizeJsonConverter())
 
         return factory
     }
 
     @Bean
-    fun jsonConverter(): RecordMessageConverter {
+    fun authorizeJsonConverter(): RecordMessageConverter {
         val converter = StringJsonMessageConverter()
         val typeMapper = DefaultJackson2JavaTypeMapper()
         typeMapper.typePrecedence = Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID
@@ -110,22 +119,73 @@ data class KafkaConfiguration(
     }
 
     @Bean
-    fun subscriptionProducerFactory(): ProducerFactory<String, Any> {
+    fun linkProducerFactory(): ProducerFactory<String, Any> {
         val props: MutableMap<String, Any> = HashMap()
-        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = subscriptionTopic.bootstrapAddress
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = linkTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
         props[JsonSerializer.TYPE_MAPPINGS] =
-            "deleteUserRequest:ru.wolfofbad.authorization.dto.request.subscription.DeleteRequest, " +
-                "subscribeRequest:ru.wolfofbad.authorization.dto.request.subscription.SubscribeRequest, " +
-                "listLinksRequest:ru.wolfofbad.authorization.dto.request.subscription.ListLinkRequest"
+            "deleteUserRequest:ru.wolfofbad.authorization.dto.request.link.DeleteRequest, " +
+                "subscribeRequest:ru.wolfofbad.authorization.dto.request.link.SubscribeRequest, " +
+                "listLinkRequest:ru.wolfofbad.authorization.dto.request.link.ListLinkRequest"
 
         return DefaultKafkaProducerFactory(props)
     }
 
     @Bean
-    fun authorizationKafkaTemplate(): KafkaTemplate<String, Any> {
-        return KafkaTemplate(subscriptionProducerFactory())
+    fun linkKafkaTemplate(): KafkaTemplate<String, Any> {
+        return KafkaTemplate(linkProducerFactory())
+    }
+
+    @Bean
+    fun authorizationLinkKafkaConsumerFactory(): ConsumerFactory<String, Any> {
+        val props = HashMap<String, Any>()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationMessagesTopic.bootstrapAddress
+        props[ConsumerConfig.GROUP_ID_CONFIG] = authorizationMessagesTopic.listenerId
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        props[JsonDeserializer.TRUSTED_PACKAGES] = "*"
+
+        return DefaultKafkaConsumerFactory(props)
+    }
+
+    @Bean
+    fun authorizationLinkKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
+        factory.consumerFactory = authorizationLinkKafkaConsumerFactory()
+        factory.setRecordMessageConverter(linkJsonConverter())
+
+        return factory
+    }
+
+    @Bean
+    fun linkJsonConverter(): RecordMessageConverter {
+        val converter = StringJsonMessageConverter()
+        val typeMapper = DefaultJackson2JavaTypeMapper()
+        typeMapper.typePrecedence = Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID
+        typeMapper.addTrustedPackages("*")
+
+        val mappings = HashMap<String, Class<*>>()
+        mappings["sendMessage"] = SendMessageRequest::class.java
+        typeMapper.idClassMapping = mappings
+
+        converter.typeMapper = typeMapper
+        return converter
+    }
+
+    @Bean
+    fun dlqAuthorizationLinkProducerFactory(): ProducerFactory<String, String> {
+        val props: MutableMap<String, Any> = HashMap()
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = authorizationMessagesDlqTopic.bootstrapAddress
+        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
+        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
+
+        return DefaultKafkaProducerFactory(props)
+    }
+
+    @Bean
+    fun dlqAuthorizationLinkKafkaTemplate(): KafkaTemplate<String, String> {
+        return KafkaTemplate(dlqAuthorizationLinkProducerFactory())
     }
 
     class TopicConfig(
