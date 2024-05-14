@@ -9,6 +9,7 @@ import ru.wolfofbad.links.domain.jooq.generated.tables.references.CHAT
 import ru.wolfofbad.links.domain.jooq.generated.tables.references.CHAT_LINK
 import ru.wolfofbad.links.domain.jooq.generated.tables.references.LINK
 import java.net.URI
+import java.time.OffsetDateTime
 
 @Repository
 class JooqLinkRepository(
@@ -29,7 +30,7 @@ class JooqLinkRepository(
             .fetchInto(Link::class.java)
     }
 
-    override fun add(uri: URI): Link {
+    override fun addByUri(uri: URI): Link {
         return jooq.insertInto(LINK)
             .columns(LINK.URI)
             .values(uri.toString())
@@ -37,17 +38,17 @@ class JooqLinkRepository(
             .fetchOneInto(Link::class.java)!!
     }
 
-    override fun delete(uri: URI): Link {
+    override fun delete(link: Link): Link {
         return jooq.deleteFrom(LINK)
-            .where(LINK.URI.eq(uri.toString()))
+            .where(LINK.ID.eq(link.id))
             .returning(*LINK.fields())
             .fetchOneInto(Link::class.java)!!
     }
 
     override fun subscribe(link: Link, chat: User): Link {
         jooq.insertInto(CHAT_LINK)
-            .columns(CHAT_LINK.LINK_ID, CHAT_LINK.CHAT_ID)
-            .values(link.id, chat.id)
+            .columns(CHAT_LINK.LINK_ID, CHAT_LINK.CHAT_ID, CHAT_LINK.LAST_UPDATE)
+            .values(link.id, chat.id, OffsetDateTime.now())
             .execute()
 
         return link
@@ -62,13 +63,21 @@ class JooqLinkRepository(
         return link
     }
 
-    override fun getUsers(uri: URI): List<User> {
+    override fun getUsers(link: Link): List<User> {
         return jooq.select(*CHAT.fields())
             .from(CHAT)
             .join(CHAT_LINK).on(CHAT.ID.eq(CHAT_LINK.CHAT_ID))
             .join(LINK).on(LINK.ID.eq(CHAT_LINK.LINK_ID))
-            .where(LINK.URI.eq(uri.toString()))
+            .where(LINK.ID.eq(link.id))
             .fetchInto(User::class.java)
+    }
+
+    override fun getLastUpdate(link: Link, chat: User): OffsetDateTime {
+        return jooq.select(CHAT_LINK.LAST_UPDATE)
+            .from(CHAT_LINK)
+            .where(CHAT_LINK.LINK_ID.eq(link.id))
+            .and(CHAT_LINK.CHAT_ID.eq(chat.id))
+            .fetchOneInto(OffsetDateTime::class.java)!!
     }
 
 }

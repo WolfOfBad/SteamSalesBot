@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.network.Send
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -22,6 +21,8 @@ import ru.wolfofbad.links.dto.authorization.DeleteRequest
 import ru.wolfofbad.links.dto.authorization.ListLinkRequest
 import ru.wolfofbad.links.dto.authorization.SendMessageRequest
 import ru.wolfofbad.links.dto.authorization.SubscribeRequest
+import ru.wolfofbad.links.dto.steamservice.SteamSubscribeRequest
+import ru.wolfofbad.links.dto.steamservice.UpdateRequest
 
 @ConfigurationProperties(prefix = "kafka", ignoreUnknownFields = false)
 data class KafkaConfiguration(
@@ -40,6 +41,14 @@ data class KafkaConfiguration(
     @NotNull
     @Name("steam-service-topic")
     val steamServiceTopic: TopicConfig,
+
+    @NotNull
+    @Name("link-update-topic")
+    val linkUpdateTopic: TopicConfig,
+
+    @NotNull
+    @Name("link-update_dlq-topic")
+    val linkUpdateDlqTopic: TopicConfig,
 ) {
     @Bean
     fun dlqLinkProducerFactory(): ProducerFactory<String, String> {
@@ -111,20 +120,71 @@ data class KafkaConfiguration(
     }
 
     @Bean
-    fun steamProducerFactory(): ProducerFactory<String, Any> {
+    fun steamProducerFactory(): ProducerFactory<String, SteamSubscribeRequest> {
         val props: MutableMap<String, Any> = HashMap()
         props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = messagesTopic.bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
-        props[JsonSerializer.TYPE_MAPPINGS] = "subscribeRequest:ru.wolfofbad.links.dto.steamservice.SubscribeRequest, " +
-            "deleteRequest:ru.wolfofbad.links.dto.steamservice.DeleteRequest"
+        props[JsonSerializer.TYPE_MAPPINGS] =
+            "subscribeRequest:ru.wolfofbad.links.dto.steamservice.SteamSubscribeRequest"
 
         return DefaultKafkaProducerFactory(props)
     }
 
     @Bean
-    fun steamKafkaTemplate(): KafkaTemplate<String, Any> {
+    fun steamKafkaTemplate(): KafkaTemplate<String, SteamSubscribeRequest> {
         return KafkaTemplate(steamProducerFactory())
+    }
+
+    @Bean
+    fun steamKafkaConsumerFactory(): ConsumerFactory<String, Any> {
+        val props = HashMap<String, Any>()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = linkUpdateTopic.bootstrapAddress
+        props[ConsumerConfig.GROUP_ID_CONFIG] = linkUpdateTopic.listenerId
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        props[JsonDeserializer.TRUSTED_PACKAGES] = "*"
+
+        return DefaultKafkaConsumerFactory(props)
+    }
+
+    @Bean
+    fun steamKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
+        factory.consumerFactory = steamKafkaConsumerFactory()
+        factory.setRecordMessageConverter(steamJsonConverter())
+
+        return factory
+    }
+
+    @Bean
+    fun steamJsonConverter(): RecordMessageConverter {
+        val converter = StringJsonMessageConverter()
+        val typeMapper = DefaultJackson2JavaTypeMapper()
+        typeMapper.typePrecedence = Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID
+        typeMapper.addTrustedPackages("*")
+
+        val mappings = HashMap<String, Class<*>>()
+        mappings["updateRequest"] = UpdateRequest::class.java
+        typeMapper.idClassMapping = mappings
+
+        converter.typeMapper = typeMapper
+        return converter
+    }
+
+    @Bean
+    fun dlqSteamProducerFactory(): ProducerFactory<String, String> {
+        val props: MutableMap<String, Any> = HashMap()
+        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = linkUpdateDlqTopic.bootstrapAddress
+        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
+        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
+
+        return DefaultKafkaProducerFactory(props)
+    }
+
+    @Bean
+    fun dlqSteamKafkaTemplate(): KafkaTemplate<String, String> {
+        return KafkaTemplate(dlqLinkProducerFactory())
     }
 
     class TopicConfig(

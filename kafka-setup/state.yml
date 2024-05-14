@@ -37,6 +37,14 @@ topics:
     partitions: 2
     replication: 3
 
+  link-update:
+    partitions: 4
+    replication: 3
+
+  link-update_dlq:
+    partitions: 2
+    replication: 3
+
   steam-service:
     partitions: 4
     replication: 3

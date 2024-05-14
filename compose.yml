@@ -203,11 +203,44 @@ services:
     depends_on:
       - link-db
 
+
+
+  steam-db:
+    image: postgres:16
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: steam
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - steamPostgres:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  steam-migrations:
+    image: liquibase/liquibase:4.25
+    command:
+      - --changelog-file=master.yml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://steam-db:5432/steam
+      - --username=postgres
+      - --password=postgres
+      - update
+    volumes:
+      - ./migrations/steam:/liquibase/changelog
+    networks:
+      - backend
+    depends_on:
+      - steam-db
+
+
 volumes:
   kafka: { }
   zookeeper: { }
   authorizationPostgres: { }
   linkPostgres: { }
+  steamPostgres: { }
 
 networks:
   kafka_network: { }

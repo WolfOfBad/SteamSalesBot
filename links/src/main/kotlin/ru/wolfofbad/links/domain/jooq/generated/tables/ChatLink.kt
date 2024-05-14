@@ -4,6 +4,7 @@
 package ru.wolfofbad.links.domain.jooq.generated.tables
 
 
+import java.time.OffsetDateTime
 import java.util.function.Function
 
 import javax.annotation.processing.Generated
@@ -15,7 +16,7 @@ import org.jooq.ForeignKey
 import org.jooq.Name
 import org.jooq.Record
 import org.jooq.Records
-import org.jooq.Row2
+import org.jooq.Row3
 import org.jooq.Schema
 import org.jooq.SelectField
 import org.jooq.Table
@@ -83,6 +84,11 @@ open class ChatLink(
      * The column <code>CHAT_LINK.LINK_ID</code>.
      */
     val LINK_ID: TableField<ChatLinkRecord, Long?> = createField(DSL.name("LINK_ID"), SQLDataType.BIGINT.nullable(false), this, "")
+
+    /**
+     * The column <code>CHAT_LINK.LAST_UPDATE</code>.
+     */
+    val LAST_UPDATE: TableField<ChatLinkRecord, OffsetDateTime?> = createField(DSL.name("LAST_UPDATE"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<ChatLinkRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<ChatLinkRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
@@ -155,18 +161,18 @@ open class ChatLink(
     override fun rename(name: Table<*>): ChatLink = ChatLink(name.getQualifiedName(), null)
 
     // -------------------------------------------------------------------------
-    // Row2 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
-    override fun fieldsRow(): Row2<Long?, Long?> = super.fieldsRow() as Row2<Long?, Long?>
+    override fun fieldsRow(): Row3<Long?, Long?, OffsetDateTime?> = super.fieldsRow() as Row3<Long?, Long?, OffsetDateTime?>
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    fun <U> mapping(from: (Long?, Long?) -> U): SelectField<U> = convertFrom(Records.mapping(from))
+    fun <U> mapping(from: (Long?, Long?, OffsetDateTime?) -> U): SelectField<U> = convertFrom(Records.mapping(from))
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    fun <U> mapping(toType: Class<U>, from: (Long?, Long?) -> U): SelectField<U> = convertFrom(toType, Records.mapping(from))
+    fun <U> mapping(toType: Class<U>, from: (Long?, Long?, OffsetDateTime?) -> U): SelectField<U> = convertFrom(toType, Records.mapping(from))
 }

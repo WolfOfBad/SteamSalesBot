@@ -1,0 +1,50 @@
+app:
+  base-url: "https://store.steampowered.com"
+
+scheduler:
+  interval: 10s
+
+backoff:
+  max-attempts: 3
+  type: exponential
+  wait-time: 5s
+  codes:
+    - internal_server_error
+    - bad_gateway
+    - service_unavailable
+    - gateway_timeout
+
+kafka:
+  steam-topic:
+    name: steam-service
+    bootstrap-address: http://localhost:9092
+    listener-id: steam-service
+
+  steam_dlq-topic:
+    name: steam-service_dlq
+    bootstrap-address: http://localhost:9092
+    listener-id: steam-service
+
+  links-topic:
+    name: link-update
+    bootstrap-address: http://localhost:9092
+    listener-id: steam-service
+
+spring:
+  application:
+    name: steam
+  datasource:
+    url: jdbc:postgresql://localhost:5434/steam
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: false
+  jackson:
+    time-zone: UTC
+
+server:
+  port: 8094
+
+logging:
+  config: classpath:log4j2-plain.xml

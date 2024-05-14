@@ -1,0 +1,79 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.23'
+}
+
+group = 'ru.wolfofbad'
+version = '0.0.1'
+
+java {
+    sourceCompatibility = '21'
+}
+
+def kotlinVersion = '1.9.23'
+def springBootVersion = '3.2.5'
+def springKafkaVersion = '3.1.4'
+def postgresqlVersion = '42.7.3'
+def kotestVersion = '5.8.1'
+def kotestSpringVersion = '1.1.3'
+def kotestWiremockVersion = '3.0.1'
+def jacksonVersion = '2.17.1'
+def mockkVersion = '1.13.10'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+    // Spring
+    implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion"
+    implementation "org.springframework.kafka:spring-kafka:$springKafkaVersion"
+    implementation "org.springframework.boot:spring-boot-starter-jooq:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-webflux:$springBootVersion"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+
+    // Database
+    implementation "org.postgresql:postgresql:$postgresqlVersion"
+
+    // Test
+    testImplementation "io.kotest:kotest-runner-junit5:$kotestVersion"
+    testImplementation "io.kotest.extensions:kotest-extensions-spring:$kotestSpringVersion"
+    testImplementation "io.kotest.extensions:kotest-extensions-wiremock:$kotestWiremockVersion"
+    testImplementation "io.mockk:mockk:${mockkVersion}"
+}
+
+configurations {
+    configureEach {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+compileKotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+    }
+}
+
+compileTestKotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

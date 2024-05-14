@@ -4,23 +4,23 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import ru.wolfofbad.links.configuration.KafkaConfiguration
-import ru.wolfofbad.links.dto.steamservice.DeleteRequest
-import ru.wolfofbad.links.dto.steamservice.SubscribeRequest
+import ru.wolfofbad.links.dto.steamservice.SteamSubscribeRequest
+import java.net.URI
 
 @Service
 class SteamSubscribeProducer(
     @Qualifier("steamKafkaTemplate")
-    private val template: KafkaTemplate<String, Any>,
+    private val template: KafkaTemplate<String, SteamSubscribeRequest>,
 
     config: KafkaConfiguration
 ) {
     private val topicName = config.steamServiceTopic.name
 
-    fun subscribe(request: SubscribeRequest) {
-        template.send(topicName, request)
+    fun subscribe(uri: URI) {
+        template.send(topicName, SteamSubscribeRequest(uri, SteamSubscribeRequest.Type.SUBSCRIBE))
     }
 
-    fun delete(request: DeleteRequest) {
-        template.send(topicName, request)
+    fun delete(uri: URI) {
+        template.send(topicName, SteamSubscribeRequest(uri, SteamSubscribeRequest.Type.UNSUBSCRIBE))
     }
 }

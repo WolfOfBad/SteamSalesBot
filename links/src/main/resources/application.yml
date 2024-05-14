@@ -19,6 +19,16 @@ kafka:
     bootstrap-address: http://localhost:9092
     listener-id: links-service
 
+  link-update-topic:
+    name: link-update
+    bootstrap-address: http://localhost:9092
+    listener-id: links-service
+
+  link-update_dlq-topic:
+    name: link-update_dlq
+    bootstrap-address: http://localhost:9092
+    listener-id: links-service
+
 spring:
   application:
     name: links

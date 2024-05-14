@@ -7,6 +7,7 @@ package ru.wolfofbad.links.domain.jooq.generated.tables.pojos
 import jakarta.validation.constraints.NotNull
 
 import java.io.Serializable
+import java.time.OffsetDateTime
 
 import javax.annotation.processing.Generated
 
@@ -26,7 +27,9 @@ data class ChatLink(
     @get:NotNull
     var chatId: Long? = null,
     @get:NotNull
-    var linkId: Long? = null
+    var linkId: Long? = null,
+    @get:NotNull
+    var lastUpdate: OffsetDateTime? = null
 ): Serializable {
 
 
@@ -50,6 +53,12 @@ data class ChatLink(
         }
         else if (this.linkId != o.linkId)
             return false
+        if (this.lastUpdate == null) {
+            if (o.lastUpdate != null)
+                return false
+        }
+        else if (this.lastUpdate != o.lastUpdate)
+            return false
         return true
     }
 
@@ -58,6 +67,7 @@ data class ChatLink(
         var result = 1
         result = prime * result + (if (this.chatId == null) 0 else this.chatId.hashCode())
         result = prime * result + (if (this.linkId == null) 0 else this.linkId.hashCode())
+        result = prime * result + (if (this.lastUpdate == null) 0 else this.lastUpdate.hashCode())
         return result
     }
 
@@ -66,6 +76,7 @@ data class ChatLink(
 
         sb.append(chatId)
         sb.append(", ").append(linkId)
+        sb.append(", ").append(lastUpdate)
 
         sb.append(")")
         return sb.toString()

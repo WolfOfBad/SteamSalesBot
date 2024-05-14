@@ -15,7 +15,15 @@ fun main() {
         .withPackageName("ru.wolfofbad.links.domain.jooq.generated")
         .withDirectory("links/src/main/kotlin")
     val linkPath = "migrations/link"
+
+    val steam = Target()
+        .withPackageName("ru.wolfofbad.steam.domain.jooq.generated")
+        .withDirectory("steam/src/main/kotlin")
+    val steamPath = "migrations/steam"
+
+    generateCode(authorization, authorizationPath)
     generateCode(link, linkPath)
+    generateCode(steam, steamPath)
 }
 
 fun generateCode(target: Target, path: String) {
