@@ -9,6 +9,7 @@ import ru.wolfofbad.links.domain.jooq.generated.tables.references.CHAT
 import ru.wolfofbad.links.domain.jooq.generated.tables.references.CHAT_LINK
 import ru.wolfofbad.links.domain.jooq.generated.tables.references.LINK
 import java.net.URI
+import java.time.Duration
 import java.time.OffsetDateTime
 
 @Repository
@@ -72,12 +73,21 @@ class JooqLinkRepository(
             .fetchInto(User::class.java)
     }
 
-    override fun getLastUpdate(link: Link, chat: User): OffsetDateTime {
-        return jooq.select(CHAT_LINK.LAST_UPDATE)
-            .from(CHAT_LINK)
-            .where(CHAT_LINK.LINK_ID.eq(link.id))
-            .and(CHAT_LINK.CHAT_ID.eq(chat.id))
-            .fetchOneInto(OffsetDateTime::class.java)!!
+    override fun getUsersToUpdate(link: Link, interval: Duration): List<User> {
+        /*return jooq.select(*LINK.fields())
+            .from(LINK)
+            .join(CHAT_LINK).on(CHAT_LINK.LINK_ID.eq(LINK.ID))
+            .join(CHAT).on(CHAT_LINK.CHAT_ID.eq(CHAT.ID))
+            .where(LINK.ID.eq(link.id))
+            .and(CHAT_LINK.LAST_UPDATE.greaterOrEqual(OffsetDateTime.now().minus(interval)))
+            .fetchInto(User::class.java)*/
+        return jooq.select(*CHAT.fields())
+            .from(CHAT)
+            .join(CHAT_LINK).on(CHAT_LINK.CHAT_ID.eq(CHAT.ID))
+            .join(LINK).on(CHAT_LINK.LINK_ID.eq(LINK.ID))
+            .where(LINK.ID.eq(link.id))
+            .and(CHAT_LINK.LAST_UPDATE.greaterOrEqual(OffsetDateTime.now().minus(interval)))
+            .fetchInto(User::class.java)
     }
 
 }

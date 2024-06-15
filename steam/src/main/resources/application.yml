@@ -2,7 +2,7 @@ app:
   base-url: "https://store.steampowered.com"
 
 scheduler:
-  interval: 10s
+  interval: 30s
 
 backoff:
   max-attempts: 3

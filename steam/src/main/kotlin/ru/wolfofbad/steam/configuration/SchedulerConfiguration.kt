@@ -9,7 +9,7 @@ import java.time.Duration
 @ConfigurationProperties(prefix = "scheduler", ignoreUnknownFields = false)
 @EnableScheduling
 data class SchedulerConfiguration(
-    @DefaultValue("30m")
+    @DefaultValue("2h")
     val interval: Duration
 ) {
     @Bean

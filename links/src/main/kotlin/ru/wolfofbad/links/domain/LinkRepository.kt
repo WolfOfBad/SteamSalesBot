@@ -3,6 +3,7 @@ package ru.wolfofbad.links.domain
 import ru.wolfofbad.links.domain.dto.Link
 import ru.wolfofbad.links.domain.dto.User
 import java.net.URI
+import java.time.Duration
 import java.time.OffsetDateTime
 
 interface LinkRepository {
@@ -20,5 +21,5 @@ interface LinkRepository {
 
     fun getUsers(link: Link): List<User>
 
-    fun getLastUpdate(link: Link, chat: User): OffsetDateTime
+    fun getUsersToUpdate(link: Link, interval: Duration): List<User>
 }

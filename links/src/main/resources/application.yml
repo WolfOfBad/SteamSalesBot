@@ -1,3 +1,6 @@
+app:
+  send-interval: 2h
+
 kafka:
   authorization-messages-topic:
     name: authorization-messages
