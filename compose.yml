@@ -235,12 +235,32 @@ services:
       - steam-db
 
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3000:3000"
+
+
 volumes:
   kafka: { }
   zookeeper: { }
   authorizationPostgres: { }
   linkPostgres: { }
   steamPostgres: { }
+  prometheus-data: { }
 
 networks:
   kafka_network: { }

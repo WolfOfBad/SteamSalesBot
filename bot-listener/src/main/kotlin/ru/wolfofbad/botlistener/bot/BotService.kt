@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.UpdatesListener
 import com.pengrad.telegrambot.model.BotCommand
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SetMyCommands
+import io.micrometer.core.instrument.Counter
 import jakarta.annotation.PostConstruct
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
@@ -19,6 +20,8 @@ class BotService(
     private val commandParser: CommandParser,
 
     private val messagesProducer: MessagesQueueProducer,
+
+    private val counter: Counter,
 
     @Qualifier("commandMap")
     commands: LinkedHashMap<String, Command>,
@@ -59,6 +62,8 @@ class BotService(
             } catch (e: Exception) {
                 logger.error(e.message)
                 messagesProducer.sendDlqMessage(e)
+            } finally {
+                counter.increment()
             }
         }
 

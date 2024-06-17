@@ -20,6 +20,9 @@ def springKafkaVersion = '3.1.4'
 def postgresqlVersion = '42.7.3'
 def kotestVersion = '5.8.1'
 def kotestSpringVersion = '1.1.3'
+def micrometerRegistryVersion = '1.12.4'
+def micrometerTracingVersion = '1.2.7'
+
 
 repositories {
     mavenCentral()
@@ -34,12 +37,17 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion"
     implementation "org.springframework.kafka:spring-kafka:$springKafkaVersion"
-    implementation "org.springframework.boot:spring-boot-starter-jooq:$springBootVersion"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
     // Database
     implementation "org.postgresql:postgresql:$postgresqlVersion"
+    implementation "org.springframework.boot:spring-boot-starter-jooq:$springBootVersion"
+
+    // Metrics
+    implementation "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
+    implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryVersion"
+    implementation "io.micrometer:micrometer-tracing-bridge-brave:$micrometerTracingVersion"
 
     // Test
     testImplementation "io.kotest:kotest-runner-junit5:$kotestVersion"

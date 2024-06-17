@@ -1,5 +1,6 @@
 package ru.wolfofbad.links.kafka.consumer
 
+import io.micrometer.core.instrument.Counter
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.annotation.KafkaHandler
@@ -28,6 +29,9 @@ class LinkRequestConsumer(
     private val linkService: LinkService,
     private val sendMessageService: SendMessageProducer,
 
+    @Qualifier("linkRequestProcessedCounter")
+    private val counter: Counter,
+
     config: KafkaConfiguration
 ) {
     private val dlqTopicName = config.linkDlqTopic.name
@@ -50,6 +54,8 @@ class LinkRequestConsumer(
         } catch (e: Exception) {
             logger.error(e.message)
             sendExceptionToDlq(request.toString(), e)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -67,6 +73,8 @@ class LinkRequestConsumer(
         } catch (e: Exception) {
             logger.error(e.message)
             sendExceptionToDlq(request.toString(), e)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -84,6 +92,8 @@ class LinkRequestConsumer(
         } catch (e: Exception) {
             logger.error(e.message)
             sendExceptionToDlq(request.toString(), e)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -96,6 +106,7 @@ class LinkRequestConsumer(
             |}
         """
         )
+        counter.increment()
     }
 
     private fun sendExceptionToDlq(request: String, exception: Exception) {

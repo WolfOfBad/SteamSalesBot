@@ -6,9 +6,9 @@ import com.pengrad.telegrambot.request.SendMessage
 import com.pengrad.telegrambot.response.BaseResponse
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import ru.wolfofbad.botsender.retry.policy.BackoffPolicy
 import ru.wolfofbad.botsender.bot.exception.MessageNotSentException
 import ru.wolfofbad.botsender.dto.request.UpdateRequest
+import ru.wolfofbad.botsender.retry.policy.BackoffPolicy
 
 @Service
 class MessageSendService(

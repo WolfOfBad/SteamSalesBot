@@ -1,5 +1,6 @@
 package ru.wolfofbad.steam.kafka.consumer
 
+import io.micrometer.core.instrument.Counter
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.annotation.KafkaHandler
@@ -22,6 +23,9 @@ class LinkKafkaConsumer(
 
     private val linkService: LinkService,
 
+    @Qualifier("linkSubscribeProcessedCounter")
+    private val counter: Counter,
+
     config: KafkaConfiguration
 ) {
     private val dlqTopicName = config.steamDlqTopic.name
@@ -36,6 +40,8 @@ class LinkKafkaConsumer(
             }
         } catch (e: Exception) {
             sendExceptionToDlq(request.toString(), e)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -48,6 +54,7 @@ class LinkKafkaConsumer(
             |}
         """
         )
+        counter.increment()
     }
 
     private fun sendExceptionToDlq(request: String, exception: Exception) {

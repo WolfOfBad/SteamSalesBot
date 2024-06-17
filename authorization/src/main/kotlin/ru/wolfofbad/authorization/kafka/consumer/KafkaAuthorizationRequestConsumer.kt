@@ -1,5 +1,6 @@
 package ru.wolfofbad.authorization.kafka.consumer
 
+import io.micrometer.core.instrument.Counter
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.annotation.KafkaHandler
@@ -30,6 +31,9 @@ class KafkaAuthorizationRequestConsumer(
     private val chatService: ChatService,
     private val linkService: LinkService,
 
+    @Qualifier("telegramAuthorizationsProcessedCounter")
+    private val counter: Counter,
+
     config: KafkaConfiguration
 ) {
     private val logger = LogManager.getLogger(KafkaAuthorizationRequestConsumer::class.java)
@@ -51,6 +55,8 @@ class KafkaAuthorizationRequestConsumer(
         } catch (exception: Exception) {
             logger.error("Error while sending authorization request", exception)
             sendExceptionToDlq(request.toString(), exception)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -65,6 +71,8 @@ class KafkaAuthorizationRequestConsumer(
             )
         } catch (exception: Exception) {
             sendExceptionToDlq(request.toString(), exception)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -79,6 +87,8 @@ class KafkaAuthorizationRequestConsumer(
             )
         } catch (exception: Exception) {
             sendExceptionToDlq(request.toString(), exception)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -91,6 +101,7 @@ class KafkaAuthorizationRequestConsumer(
             |}
         """
         )
+        counter.increment()
     }
 
     private fun sendExceptionToDlq(request: String, exception: Exception) {

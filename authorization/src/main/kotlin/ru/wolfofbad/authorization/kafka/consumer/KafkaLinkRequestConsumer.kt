@@ -1,5 +1,6 @@
 package ru.wolfofbad.authorization.kafka.consumer
 
+import io.micrometer.core.instrument.Counter
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.annotation.KafkaHandler
@@ -22,6 +23,9 @@ class KafkaLinkRequestConsumer(
 
     private val messageService: SendMessageService,
 
+    @Qualifier("linkAuthorizationsProcessedCounter")
+    private val counter: Counter,
+
     config: KafkaConfiguration
 ) {
     private val dlqTopicName = config.authorizationMessagesDlqTopic.name
@@ -33,6 +37,8 @@ class KafkaLinkRequestConsumer(
             messageService.sendMessage(request)
         } catch (e: Exception) {
             sendExceptionToDlq(request.toString(), e)
+        } finally {
+            counter.increment()
         }
     }
 
@@ -45,6 +51,7 @@ class KafkaLinkRequestConsumer(
             |}
         """
         )
+        counter.increment()
     }
 
     private fun sendExceptionToDlq(request: String, exception: Exception) {

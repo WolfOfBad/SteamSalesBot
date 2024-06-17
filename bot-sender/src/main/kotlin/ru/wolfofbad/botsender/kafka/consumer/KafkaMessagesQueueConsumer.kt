@@ -1,5 +1,6 @@
 package ru.wolfofbad.botsender.kafka.consumer
 
+import io.micrometer.core.instrument.Counter
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.annotation.KafkaHandler
@@ -20,6 +21,9 @@ class KafkaMessagesQueueConsumer(
     private val messageSendService: MessageSendService,
     @Qualifier("dlqMessagesKafkaTemplate")
     private val dlqTemplate: KafkaTemplate<String, String>,
+
+    private val counter: Counter,
+
     config: KafkaConfiguration
 ) {
     private val logger = LogManager.getLogger(KafkaMessagesQueueConsumer::class.java)
@@ -45,6 +49,8 @@ class KafkaMessagesQueueConsumer(
                 |}
             """
             )
+        } finally {
+            counter.increment()
         }
     }
 
