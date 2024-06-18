@@ -8,8 +8,8 @@ import ru.wolfofbad.authorization.domain.ChatRepository
 import ru.wolfofbad.authorization.dto.TgChat
 import ru.wolfofbad.authorization.exception.AlreadyRegisteredException
 import ru.wolfofbad.authorization.exception.NoSuchChatException
-import ru.wolfofbad.authorization.kafka.producer.KafkaMessageQueueProducer
 import ru.wolfofbad.authorization.kafka.producer.KafkaLinkQueueProducer
+import ru.wolfofbad.authorization.kafka.producer.KafkaMessageQueueProducer
 import ru.wolfofbad.authorization.service.ChatService
 
 @Service

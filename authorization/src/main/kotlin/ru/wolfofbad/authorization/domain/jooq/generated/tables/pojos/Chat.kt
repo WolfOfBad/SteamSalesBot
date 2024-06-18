@@ -26,7 +26,7 @@ data class Chat(
     var id: Long? = null,
     @get:NotNull
     var tgChatId: Long? = null
-): Serializable {
+) : Serializable {
 
 
     override fun equals(other: Any?): Boolean {
@@ -40,14 +40,12 @@ data class Chat(
         if (this.id == null) {
             if (o.id != null)
                 return false
-        }
-        else if (this.id != o.id)
+        } else if (this.id != o.id)
             return false
         if (this.tgChatId == null) {
             if (o.tgChatId != null)
                 return false
-        }
-        else if (this.tgChatId != o.tgChatId)
+        } else if (this.tgChatId != o.tgChatId)
             return false
         return true
     }

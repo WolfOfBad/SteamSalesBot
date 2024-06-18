@@ -13,7 +13,7 @@ import ru.wolfofbad.authorization.service.LinkService
 class JooqLinkService(
     private val repository: ChatRepository,
     private val producer: KafkaLinkQueueProducer
-): LinkService {
+) : LinkService {
     override fun handleLink(request: LinkRequest) {
         val chat = repository.getByTgChatId(request.telegramChatId) ?: throw NoSuchChatException()
 

@@ -4,13 +4,10 @@
 package ru.wolfofbad.authorization.domain.jooq.generated
 
 
-import javax.annotation.processing.Generated
-
-import kotlin.collections.List
-
 import org.jooq.Constants
 import org.jooq.Schema
 import org.jooq.impl.CatalogImpl
+import javax.annotation.processing.Generated
 
 
 /**

@@ -4,15 +4,11 @@
 package ru.wolfofbad.authorization.domain.jooq.generated
 
 
-import javax.annotation.processing.Generated
-
-import kotlin.collections.List
-
 import org.jooq.Catalog
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
-
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
+import javax.annotation.processing.Generated
 
 
 /**

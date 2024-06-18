@@ -12,10 +12,11 @@ import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.records.ChatRecord
 
 
-
 // -------------------------------------------------------------------------
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
-val CONSTRAINT_1: UniqueKey<ChatRecord> = Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1"), arrayOf(Chat.CHAT.ID), true)
-val CONSTRAINT_1F: UniqueKey<ChatRecord> = Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1F"), arrayOf(Chat.CHAT.TG_CHAT_ID), true)
+val CONSTRAINT_1: UniqueKey<ChatRecord> =
+    Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1"), arrayOf(Chat.CHAT.ID), true)
+val CONSTRAINT_1F: UniqueKey<ChatRecord> =
+    Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1F"), arrayOf(Chat.CHAT.TG_CHAT_ID), true)

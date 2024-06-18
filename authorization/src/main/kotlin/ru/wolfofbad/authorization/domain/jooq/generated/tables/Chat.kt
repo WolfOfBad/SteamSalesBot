@@ -4,36 +4,17 @@
 package ru.wolfofbad.authorization.domain.jooq.generated.tables
 
 
-import java.util.function.Function
-
-import javax.annotation.processing.Generated
-
-import kotlin.collections.List
-
-import org.jooq.Field
-import org.jooq.ForeignKey
-import org.jooq.Identity
-import org.jooq.Index
-import org.jooq.Name
-import org.jooq.Record
-import org.jooq.Records
-import org.jooq.Row2
-import org.jooq.Schema
-import org.jooq.SelectField
-import org.jooq.Table
-import org.jooq.TableField
-import org.jooq.TableOptions
-import org.jooq.UniqueKey
+import org.jooq.*
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
-
 import ru.wolfofbad.authorization.domain.jooq.generated.DefaultSchema
 import ru.wolfofbad.authorization.domain.jooq.generated.indexes.TG_CHAT_ID_INDEX
 import ru.wolfofbad.authorization.domain.jooq.generated.keys.CONSTRAINT_1
 import ru.wolfofbad.authorization.domain.jooq.generated.keys.CONSTRAINT_1F
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.records.ChatRecord
+import javax.annotation.processing.Generated
 
 
 /**
@@ -53,7 +34,7 @@ open class Chat(
     path: ForeignKey<out Record, ChatRecord>?,
     aliased: Table<ChatRecord>?,
     parameters: Array<Field<*>?>?
-): TableImpl<ChatRecord>(
+) : TableImpl<ChatRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
     child,
@@ -79,32 +60,44 @@ open class Chat(
     /**
      * The column <code>CHAT.ID</code>.
      */
-    val ID: TableField<ChatRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "")
+    val ID: TableField<ChatRecord, Long?> =
+        createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "")
 
     /**
      * The column <code>CHAT.TG_CHAT_ID</code>.
      */
-    val TG_CHAT_ID: TableField<ChatRecord, Long?> = createField(DSL.name("TG_CHAT_ID"), SQLDataType.BIGINT.nullable(false), this, "")
+    val TG_CHAT_ID: TableField<ChatRecord, Long?> =
+        createField(DSL.name("TG_CHAT_ID"), SQLDataType.BIGINT.nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<ChatRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<ChatRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<ChatRecord>?) : this(alias, null, null, aliased, null)
+    private constructor(alias: Name, aliased: Table<ChatRecord>?, parameters: Array<Field<*>?>?) : this(
+        alias,
+        null,
+        null,
+        aliased,
+        parameters
+    )
 
     /**
      * Create an aliased <code>CHAT</code> table reference
      */
-    constructor(alias: String): this(DSL.name(alias))
+    constructor(alias: String) : this(DSL.name(alias))
 
     /**
      * Create an aliased <code>CHAT</code> table reference
      */
-    constructor(alias: Name): this(alias, null)
+    constructor(alias: Name) : this(alias, null)
 
     /**
      * Create a <code>CHAT</code> table reference
      */
-    constructor(): this(DSL.name("CHAT"), null)
+    constructor() : this(DSL.name("CHAT"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, ChatRecord>): this(Internal.createPathAlias(child, key), child, key, CHAT, null)
+    constructor(
+        child: Table<out Record>,
+        key: ForeignKey<out Record, ChatRecord>
+    ) : this(Internal.createPathAlias(child, key), child, key, CHAT, null)
+
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(TG_CHAT_ID_INDEX)
     override fun getIdentity(): Identity<ChatRecord, Long?> = super.getIdentity() as Identity<ChatRecord, Long?>
@@ -143,5 +136,6 @@ open class Chat(
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    fun <U> mapping(toType: Class<U>, from: (Long?, Long?) -> U): SelectField<U> = convertFrom(toType, Records.mapping(from))
+    fun <U> mapping(toType: Class<U>, from: (Long?, Long?) -> U): SelectField<U> =
+        convertFrom(toType, Records.mapping(from))
 }

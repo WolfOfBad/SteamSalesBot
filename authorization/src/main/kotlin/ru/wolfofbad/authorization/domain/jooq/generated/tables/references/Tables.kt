@@ -7,7 +7,6 @@ package ru.wolfofbad.authorization.domain.jooq.generated.tables.references
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
 
 
-
 /**
  * The table <code>CHAT</code>.
  */

@@ -5,17 +5,14 @@ package ru.wolfofbad.authorization.domain.jooq.generated.tables.records
 
 
 import jakarta.validation.constraints.NotNull
-
-import javax.annotation.processing.Generated
-
 import org.jetbrains.annotations.Nullable
 import org.jooq.Field
 import org.jooq.Record1
 import org.jooq.Record2
 import org.jooq.Row2
 import org.jooq.impl.UpdatableRecordImpl
-
 import ru.wolfofbad.authorization.domain.jooq.generated.tables.Chat
+import javax.annotation.processing.Generated
 
 
 /**
@@ -33,13 +30,13 @@ open class ChatRecord() : UpdatableRecordImpl<ChatRecord>(Chat.CHAT), Record2<Lo
 
     open var id: Long?
         set(value): Unit = set(0, value)
-    @Nullable
+        @Nullable
         get(): Long? = get(0) as Long?
 
     @get:NotNull
     open var tgChatId: Long?
         set(value): Unit = set(1, value)
-    @org.jetbrains.annotations.NotNull
+        @org.jetbrains.annotations.NotNull
         get(): Long? = get(1) as Long?
 
     // -------------------------------------------------------------------------
@@ -80,7 +77,7 @@ open class ChatRecord() : UpdatableRecordImpl<ChatRecord>(Chat.CHAT), Record2<Lo
     /**
      * Create a detached, initialised ChatRecord
      */
-    constructor(id: Long? = null, tgChatId: Long? = null): this() {
+    constructor(id: Long? = null, tgChatId: Long? = null) : this() {
         this.id = id
         this.tgChatId = tgChatId
         resetChangedOnNotNull()
@@ -89,7 +86,7 @@ open class ChatRecord() : UpdatableRecordImpl<ChatRecord>(Chat.CHAT), Record2<Lo
     /**
      * Create a detached, initialised ChatRecord
      */
-    constructor(value: ru.wolfofbad.authorization.domain.jooq.generated.tables.pojos.Chat?): this() {
+    constructor(value: ru.wolfofbad.authorization.domain.jooq.generated.tables.pojos.Chat?) : this() {
         if (value != null) {
             this.id = value.id
             this.tgChatId = value.tgChatId
