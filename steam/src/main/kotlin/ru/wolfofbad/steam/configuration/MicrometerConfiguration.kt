@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration
 class MicrometerConfiguration {
     @Bean
     fun linkSubscribeProcessedCounter(prometheusMeterRegistry: MeterRegistry): Counter {
-        return prometheusMeterRegistry.counter("link_subscribes_processed")
+        return prometheusMeterRegistry.counter("steam_subscribes_processed")
     }
 
     @Bean
     fun linkUpdatesProcessedCounter(prometheusMeterRegistry: MeterRegistry): Counter {
-        return prometheusMeterRegistry.counter("link_updates_processed")
+        return prometheusMeterRegistry.counter("steam_updates_processed")
     }
 }

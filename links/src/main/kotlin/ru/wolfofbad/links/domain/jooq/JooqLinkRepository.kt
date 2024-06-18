@@ -28,6 +28,7 @@ class JooqLinkRepository(
             .from(LINK)
             .join(CHAT_LINK).on(LINK.ID.eq(CHAT_LINK.LINK_ID))
             .join(CHAT).on(CHAT.ID.eq(CHAT_LINK.CHAT_ID))
+            .where(CHAT.ID.eq(chatId))
             .fetchInto(Link::class.java)
     }
 
@@ -74,20 +75,20 @@ class JooqLinkRepository(
     }
 
     override fun getUsersToUpdate(link: Link, interval: Duration): List<User> {
-        /*return jooq.select(*LINK.fields())
-            .from(LINK)
-            .join(CHAT_LINK).on(CHAT_LINK.LINK_ID.eq(LINK.ID))
-            .join(CHAT).on(CHAT_LINK.CHAT_ID.eq(CHAT.ID))
-            .where(LINK.ID.eq(link.id))
-            .and(CHAT_LINK.LAST_UPDATE.greaterOrEqual(OffsetDateTime.now().minus(interval)))
-            .fetchInto(User::class.java)*/
-        return jooq.select(*CHAT.fields())
+        val users = jooq.select(*CHAT.fields())
             .from(CHAT)
             .join(CHAT_LINK).on(CHAT_LINK.CHAT_ID.eq(CHAT.ID))
             .join(LINK).on(CHAT_LINK.LINK_ID.eq(LINK.ID))
             .where(LINK.ID.eq(link.id))
-            .and(CHAT_LINK.LAST_UPDATE.greaterOrEqual(OffsetDateTime.now().minus(interval)))
+            .and(CHAT_LINK.LAST_UPDATE.lessOrEqual(OffsetDateTime.now().minus(interval)))
             .fetchInto(User::class.java)
+
+        jooq.update(CHAT_LINK)
+            .set(CHAT_LINK.LAST_UPDATE, OffsetDateTime.now())
+            .where(CHAT_LINK.LINK_ID.eq(link.id))
+            .execute()
+
+        return users
     }
 
 }

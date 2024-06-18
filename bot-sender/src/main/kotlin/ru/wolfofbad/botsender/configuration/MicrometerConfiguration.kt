@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration
 class MicrometerConfiguration {
     @Bean
     fun messagesProcessedCounter(prometheusMeterRegistry: MeterRegistry): Counter {
-        return prometheusMeterRegistry.counter("messages_processed")
+        return prometheusMeterRegistry.counter("bot-sender_messages_processed")
     }
 }

@@ -43,14 +43,17 @@ class SteamClient(
             .bodyToMono(String::class.java)
             .block()!!
 
-        val map = mapper.readValue<Map<String, Any>>(response)
-            .entries
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    { entry -> ids[entry.key] ?: throw Exception("No link found in response") },
-                    { entry -> mapper.convertValue(entry.value, Game::class.java) })
-            )
+        val map = HashMap<Link, Game>()
+        for (game in mapper.readValue<Map<String, Any>>(response).entries) {
+            var deserializedGame: Game?
+            try {
+                deserializedGame = mapper.convertValue(game.value, Game::class.java)
+            } catch (e: Exception) {
+                continue
+            }
+
+            map[ids[game.key] ?: throw Exception("No link found in response")] = deserializedGame
+        }
 
         return map
     }

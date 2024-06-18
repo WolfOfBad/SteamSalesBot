@@ -1,6 +1,5 @@
 package ru.wolfofbad.links.service
 
-import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.wolfofbad.links.configuration.ApplicationConfiguration
@@ -25,12 +24,14 @@ class SendUpdateService(
 
         val users = linkRepository.getUsersToUpdate(link, interval)
         for (user in users) {
-            sendMessageProducer.sendMessage(SendMessageRequest(
-                user.id,
-                "Обновление по ссылке: ${link.uri}\n\n" +
-                    "Предыдущая цена: ${request.initialFormatted}\nТекущая цена: ${request.finalFormatted}\n" +
-                    "Скидка: ${request.discount}%"
-            ))
+            sendMessageProducer.sendMessage(
+                SendMessageRequest(
+                    user.id,
+                    "Обновление по ссылке: ${link.uri}\n\n" +
+                        "Предыдущая цена: ${request.initialFormatted}\nТекущая цена: ${request.finalFormatted}\n" +
+                        "Скидка: ${request.discount}%"
+                )
+            )
         }
     }
 }
